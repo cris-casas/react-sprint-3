@@ -64,7 +64,7 @@ var products = [
      }
  ]
  // Array with products (objects) added directly with push(). Products in this array are repeated.
- var cartList = [];
+ //var cartList = [];
  
  // Improved version of cartList. Cart is an array of products (objects), but each one has a quantity field to define its quantity, so these products are not repeated.
  var cart = [];
@@ -72,52 +72,61 @@ var products = [
  var total = 0;
  
  // Exercise 1
+ /*
  function buy(id) {
      // 1. Loop for to the array products to get the item to add to cart
      // 2. Add found product to the cartList array
  
-     let product = products.length-1;
- 
-     for (let i=0; i<=product; i++){
- 
- 
+     for (let i=0; i<products.length; i++){
+
          if (products[i].id == id) {
- 
              cartList.push(products[i]);
-             console.log(products[i]);
          }  
- 
      }
- 
-     console.log(cartList);
- 
  }
- 
+ */
+
  // Exercise 2
  function cleanCart() {
-     cartList.length = 0;
-     console.log(cartList);
+    //cartList.length = 0;
+
+    let carrito = document.getElementById("cart_list");
+    let totalPrice = document.getElementById("total_price");
+
+    cart.length = 0;
+    total = 0;
+    carrito.innerHTML = "";
+    totalPrice.innerHTML = "";
+
  }
  
  // Exercise 3
  function calculateTotal() {
      // Calculate total price of the cart using the "cartList" array
-     let lista = cartList.length-1;
  
-     for (let i=0; i<=lista; i++){
-         total += cartList[i].price;
-     }
- 
-     console.log(total);
+     total = 0;
+
+     for (let i=0; i<cart.length; i++){
+
+        if (cart[i].subtotalWithDiscount) {
+
+            total += cart[i].subtotalWithDiscount;
+
+        } else {
+
+            total += cart[i].subtotal;
+            
+        }
+    }
  
  }
  
  // Exercise 4
+ /*
  function generateCart() {
      // Using the "cartlist" array that contains all the items in the shopping cart, 
      // generate the "cart" array that does not contain repeated items, instead each item of this array "cart" shows the quantity of product.
- 
- 
+     
      for (let i=0; i<cartList.length; i++){
  
          let j = 0;
@@ -128,7 +137,7 @@ var products = [
              if(cartList[i].name === cart[j].name) {
                  encontrado = true;
                  cart[j].quantity = cart[j].quantity + 1;
-                 //console.log(cart);
+                 cartList[i].subtotal = cart[j].quantity * cartList[i].price ;
              }
  
              j++
@@ -137,57 +146,135 @@ var products = [
          if(!encontrado){
  
              cartList[i].quantity = 1;
+             cartList[i].subtotal = cartList[i].price;
+             cartList[i].subtotalWithDiscount = null;
              cart.push(cartList[i]);
-             //console.log(cart);
          } 
      }
+
+     cartList.length = 0;
  
-     console.log(cart);
  }
+ */
  
  // Exercise 5
  function applyPromotionsCart() {
      // Apply promotions to each item in the array "cart"
- 
-     for (let i=0; i<cart.length; i++){
- 
-         if((cart[i].name === 'cooking oil') && (cart[i].quantity >= cart[i].offer.number)) {
- 
-             cart[i].subtotalWithDiscount = cart[i].offer.price * cart[i].quantity;
-             console.log(cart[i].subtotalWithDiscount);
- 
-         } else if ((cart[i].name === 'Instant cupcake mixture') && (cart[i].quantity >= cart[i].offer.number)) {
- 
-             let priceWithDiscount = cart[i].price * (100 - cart[i].offer.percent) / 100;
-             cart[i].subtotalWithDiscount = priceWithDiscount * cart[i].quantity;
-             console.log(cart[i].subtotalWithDiscount);
- 
-         }
-     }
+
+    cart.forEach(element => {
+
+        if((element.name == 'cooking oil') && (element.quantity >= element.offer.number)) {
+            element.subtotalWithDiscount = element.offer.price * element.quantity;
+
+        } else if ((element.name == 'Instant cupcake mixture') && (element.quantity >= element.offer.number)) {
+
+            let priceWithDiscount = element.price * (100 - element.offer.percent) / 100;
+            element.subtotalWithDiscount = priceWithDiscount * element.quantity;
+        
+        }
+    });
+
  }
+
+ //<td><button type="button" onclick="removeFromCart(id)" class="btn btn-outline-dark">Rest product</button></td>
+
  
  // Exercise 6
  function printCart() {
      // Fill the shopping cart modal manipulating the shopping cart dom
- }
+
+    let carrito = document.getElementById("cart_list");
+    let totalPrice = document.getElementById("total_price");
+    carrito.innerHTML = " ";
+
+   for (let i=0; i<cart.length; i++){
+
+         if (cart[i].subtotalWithDiscount) {
+
+            carrito.insertAdjacentHTML("beforeend", 
+            `<tr>
+            <th scope='row'>${cart[i].name}</th>
+            <td>$${cart[i].price}</td>
+            <td>${cart[i].quantity}</td>
+            <td>$${cart[i].subtotalWithDiscount}</td>
+            <td><button type="button" onclick="removeFromCart(${cart[i].id})" class="btn btn-outline-dark">Rest product</button></td>
+            </tr>`);
+
+        } else {
+
+            carrito.insertAdjacentHTML("beforeend", 
+            `<tr>
+            <th scope='row'>${cart[i].name}</th>
+            <td>$${cart[i].price}</td>
+            <td>${cart[i].quantity}</td>
+            <td>$${cart[i].subtotal}</td>
+            <td><button type="button" onclick="removeFromCart(${cart[i].id})" class="btn btn-outline-dark">Rest product</button></td>
+            </tr>`);
+
+        }
+     }
+
+     totalPrice.innerHTML = total;
+}
  
  
  // ** Nivell II **
  
  // Exercise 7
  function addToCart(id) {
-     // Refactor previous code in order to simplify it 
-     // 1. Loop for to the array products to get the item to add to cart
-     // 2. Add found product to the cart array or update its quantity in case it has been added previously.
- }
+    // Refactor previous code in order to simplify it
+    // 1. Loop for to the array products to get the item to add to cart
+
+    // let product = products[id-1]; // OPCIÓN SIN LOOP
+    let product = products.find (element => element.id == id);
+
+    // 2. Add found product to the cart array or update its quantity in case it has been added previously.
+    let prodEncontrado = cart.find ( element => element.name == product.name );
+
+    if(prodEncontrado) {
+        product.quantity += 1;
+        product.subtotal += product.price;
+
+    } else {
+        product.quantity = 1;
+        product.subtotal = product.price;
+        cart.push(product);
+    }
+    
+    applyPromotionsCart();
+    calculateTotal();
+}
+
  
  // Exercise 8
  function removeFromCart(id) {
-     // 1. Loop for to the array products to get the item to add to cart
-     // 2. Add found product to the cartList array
+    // 1. Loop for to the array products to get the item to add to cart
+    // 2. Add found product to the cartList array
+
+    let i = 0;
+    let encontrado = false;
+
+    while (i < cart.length && !encontrado) {
+
+        if (cart[i].id == id) {
+
+            if(cart[i].quantity > 1) {
+                cart[i].quantity -= 1;
+                cart[i].subtotal -= cart[i].price;
+        
+            } else {
+                cart.splice(i, 1);
+            }
+            encontrado = true;
+        }
+
+        i++;
+    }
+
+    printCart();
+    
  }
  
  function open_modal(){
-     console.log("Open Modal");
-     printCart();
+    printCart();
  }

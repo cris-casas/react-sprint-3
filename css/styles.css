@@ -2910,6 +2910,12 @@ textarea.form-control-lg {
   color: #dc3545;
 }
 
+/*
+.mi-invalid-feedback {
+  display: block !important;
+}
+*/
+
 .invalid-tooltip {
   position: absolute;
   top: 100%;
