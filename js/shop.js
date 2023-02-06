@@ -171,12 +171,14 @@ var products = [
             let priceWithDiscount = element.price * (100 - element.offer.percent) / 100;
             element.subtotalWithDiscount = priceWithDiscount * element.quantity;
         
+        } else {
+
+            element.subtotalWithDiscount = null;
+
         }
     });
 
  }
-
- //<td><button type="button" onclick="removeFromCart(id)" class="btn btn-outline-dark">Rest product</button></td>
 
  
  // Exercise 6
@@ -189,7 +191,7 @@ var products = [
 
    for (let i=0; i<cart.length; i++){
 
-         if (cart[i].subtotalWithDiscount) {
+         if (cart[i].subtotalWithDiscount != null) {
 
             carrito.insertAdjacentHTML("beforeend", 
             `<tr>
@@ -232,13 +234,13 @@ var products = [
     let prodEncontrado = cart.find ( element => element.name == product.name );
 
     if(prodEncontrado) {
-        product.quantity += 1;
-        product.subtotal += product.price;
+    product.quantity += 1;
+    product.subtotal += product.price;
 
     } else {
-        product.quantity = 1;
-        product.subtotal = product.price;
-        cart.push(product);
+    product.quantity = 1;
+    product.subtotal = product.price;
+    cart.push(product);
     }
     
     applyPromotionsCart();
@@ -248,31 +250,33 @@ var products = [
  
  // Exercise 8
  function removeFromCart(id) {
-    // 1. Loop for to the array products to get the item to add to cart
-    // 2. Add found product to the cartList array
+     // 1. Loop for to the array products to get the item to add to cart
+     // 2. Add found product to the cartList array
 
-    let i = 0;
-    let encontrado = false;
-
-    while (i < cart.length && !encontrado) {
-
-        if (cart[i].id == id) {
-
-            if(cart[i].quantity > 1) {
-                cart[i].quantity -= 1;
-                cart[i].subtotal -= cart[i].price;
-        
-            } else {
-                cart.splice(i, 1);
-            }
-            encontrado = true;
-        }
-
-        i++;
-    }
-
-    printCart();
-    
+     let i = 0;
+     let encontrado = false;
+ 
+     while (i < cart.length && !encontrado) {
+ 
+         if (cart[i].id == id) {
+ 
+             if(cart[i].quantity > 1) {
+                 cart[i].quantity -= 1;
+                 cart[i].subtotal -= cart[i].price;
+         
+             } else {
+                 cart.splice(i, 1);
+             }
+             encontrado = true;
+         }
+ 
+         i++;
+     }
+ 
+     applyPromotionsCart();
+     calculateTotal();
+     printCart();
+     
  }
  
  function open_modal(){
